@@ -20,7 +20,7 @@ const Nav = () => {
   
 
   return (
-    <NavWrapper show={show}>
+    <NavWrapper $show={show}>
       <Logo>
         <img
           alt='Disney Plus Logo'
