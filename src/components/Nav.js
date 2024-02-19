@@ -5,19 +5,19 @@ const Nav = () => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    window.addEventListener('scroll', () => {
-      if(window.scrollY > 50) {
-        setShow(true);
-      } else {
-        setShow(false);
-      }
-    })
-  
+    window.addEventListener('scroll', handleScroll)
     return () => {
-      window.removeEventListener('scroll', () => {})
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
   
+  const handleScroll = () => {
+    if(window.scrollY > 50) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }
 
   return (
     <NavWrapper $show={show}>
@@ -40,7 +40,7 @@ const NavWrapper = styled.nav`
   left: 0;
   right: 0;
   height: 70px;
-  background-color: ${props => props.show ? '#090b13' : 'transparent'};
+  background-color: ${props => props.$show ? '#090b13' : 'transparent'};
   display: flex;
   justify-content: space-between;
   align-items: center;
