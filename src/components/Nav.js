@@ -11,7 +11,9 @@ const Nav = () => {
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
 
-  const [userData, setUserData] = useState({});
+  const initialUserData = localStorage.getItem('userData') ? 
+    JSON.parse(localStorage.getItem('userData')) : {};
+  const [userData, setUserData] = useState(initialUserData);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => { 
@@ -23,7 +25,7 @@ const Nav = () => {
         navigate('/');
       }
     });
-  });
+  }, [auth, navigate, pathname]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
@@ -49,6 +51,7 @@ const Nav = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         setUserData(result.user);
+        localStorage.setItem('userData', JSON.stringify(result.user));
       }).catch((error) => {
         console.log(error);
       });
@@ -57,6 +60,7 @@ const Nav = () => {
   const handleLogOut = () => {
     signOut(auth).then(() => {
       setUserData(null);
+      localStorage.setItem('userData', null);
       navigate('/');
     }).catch((error) => {
       console.log(error);
