@@ -1,3 +1,4 @@
+import { GoogleAuthProvider, getAuth, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
@@ -7,6 +8,20 @@ const Nav = () => {
   const { pathname } = useLocation();
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => { 
+      if (user) {
+        if (pathname === '/') {
+          navigate('/main');
+        }
+      } else {
+        navigate('/');
+      }
+    });
+  });
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
@@ -16,7 +31,7 @@ const Nav = () => {
   }, [])
 
   const handleScroll = () => {
-    if(window.scrollY > 50) {
+    if (window.scrollY > 50) {
       setShow(true);
     } else {
       setShow(false);
@@ -26,6 +41,15 @@ const Nav = () => {
   const handleChange = (e) => {
     setSearchValue(e.target.value);
     navigate(`/search?q=${e.target.value}`);
+  }
+
+  const handleAuth = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+
+      }).catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
@@ -38,14 +62,14 @@ const Nav = () => {
         />
       </Logo>
       {pathname === '/' ?
-      (<Login>Login</Login>) : 
-      <Input
-        value={searchValue}
-        onChange={handleChange}
-        className='nav__input' 
-        type='text' 
-        placeholder='검색어를 입력하세요.'
-      />}
+        (<Login onClick={handleAuth}>Login</Login>) :
+        <Input
+          value={searchValue}
+          onChange={handleChange}
+          className='nav__input'
+          type='text'
+          placeholder='검색어를 입력하세요.'
+        />}
     </NavWrapper>
   )
 }
